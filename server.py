@@ -7,7 +7,7 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
-
+asui=""
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -109,10 +109,21 @@ def delete(tabel, id, apikey):
 
 @app.route('/api/show/<tabel>/<apikey>', methods=['GET'])
 def show(tabel, apikey):
+    global asui
     if request.method == 'GET':
         if apikey == 'bayu':
-            data = tampil_user(tabel)
-            return(data)
+            koneksi = sqlite3.connect("data.db")
+            kursor = koneksi.cursor()
+            kursor.execute(f"""SELECT * FROM {tabel}""");
+            # select = pencarian
+            # * = semua
+            # FROM = dari
+            # tabel = tabel yg dituju
+            data_isi = kursor.fetchall()
+            for ow in str(data_isi):
+                asui+=ow
+
+            return(asui)
         else:
             return jsonify({'status': 'error','raise': 'apikey tidak valid'})
     else:
