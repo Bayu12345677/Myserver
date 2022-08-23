@@ -128,6 +128,29 @@ def show(tabel, apikey):
             return jsonify({'status': 'error','raise': 'apikey tidak valid'})
     else:
         return 'Error'
+        
+@app.route("/api/select/<tabel>/<id>/<apikey>")
+def select(tabel,id,apikey):
+    if request.method == 'GET':
+        if apikey == "bayu":
+            try:
+                koneksi = sqlite3.connect("data.db")
+                kursor = koneksi.cursor()
+                kursor.execute(f"""SELECT * FROM {tabel} WHERE id == {id};""")
+                data_isi = kursor.fetchall()
+                id = data_isi[0][0]
+                nama = data_isi[0][1]
+                key = data_isi[0][2]
+                status = data_isi[0][3]
 
+                return jsonify({"id":id,"nama":nama,"key":key,"status":status})
+            except:
+                return jsonify({"status":"gagal menemukan data"})
+                pass
+        else:
+            return jsonify({'status': 'error','raise': 'apikey tidak valid'})
+    else:
+        return "Error GET"
+        
 if __name__ == '__main__':
     app.run(debug=True)
